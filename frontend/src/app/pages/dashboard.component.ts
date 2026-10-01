@@ -9,32 +9,31 @@ import { EurPipe, dateFr, messageErreur, moisLabel } from '../core/format';
   standalone: true,
   imports: [EurPipe, RouterLink],
   styles: [`
-    .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem; }
-    .figure { background: var(--surface); padding: 1rem 1.15rem; }
-    .figure .label { color: var(--muted); font-size: 0.85rem; }
-    .figure .value { font-family: var(--display); font-size: 1.75rem; font-variant-numeric: tabular-nums; margin-top: 0.15rem; }
+    .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin-bottom: 3.5rem; }
+    .figure { padding: 1.6rem 1.25rem 1.5rem 0; }
+    .figure .label { color: var(--muted); font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+    .figure .value { font-family: var(--display); font-weight: 300; font-size: 2.1rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; margin-top: 0.5rem; }
     .figure .hint { color: var(--muted); font-size: 0.8rem; }
-    .value.pos { color: var(--paid); } .value.neg { color: var(--late); } .value.warn { color: var(--pending); }
-    .registre { margin-bottom: 2rem; }
-    .reg-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1rem 0.75rem; }
-    table.reg { border-collapse: separate; border-spacing: 5px; }
-    table.reg th { font-weight: 400; color: var(--muted); font-size: 0.8rem; text-align: center; white-space: nowrap; }
-    table.reg th[scope=row] { text-align: left; color: var(--ink); font-size: 0.95rem; padding-right: 1rem; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
-    table.reg th.now { color: var(--ink); font-weight: 700; }
-    .cell { display: block; width: 34px; height: 34px; border-radius: 4px; background: var(--empty); }
+    .value.neg { color: var(--late); }
+    .registre { margin-bottom: 3.5rem; }
+    .reg-scroll { overflow-x: auto; padding: 0.25rem 0 0; }
+    table.reg { border-collapse: separate; border-spacing: 4px; }
+    table.reg th { font-weight: 600; color: var(--muted); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; text-align: center; white-space: nowrap; padding-bottom: 0.4rem; }
+    table.reg th[scope=row] { text-align: left; color: var(--ink); font-size: 0.68rem; padding: 0 1.4rem 0 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+    table.reg th.now { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+    .cell { display: block; width: 34px; height: 34px; background: var(--empty); }
     .cell.paye { background: var(--paid); }
-    .cell.attente { background: transparent; border: 2px dashed var(--pending); }
+    .cell.attente { background: transparent; border: 1px solid var(--ink); }
     .cell.retard { background: var(--late); }
-    .legend { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; }
+    .legend { display: flex; gap: 1.75rem; flex-wrap: wrap; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 1rem; }
     .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
-    .legend .cell { width: 14px; height: 14px; }
-    .legend .cell.attente { border-width: 1.5px; }
+    .legend .cell { width: 10px; height: 10px; }
     .bars { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding: 0 0.25rem; }
     .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; min-width: 22px; }
     .bar-pair { display: flex; gap: 2px; align-items: flex-end; height: 100%; width: 100%; justify-content: center; }
-    .bar { width: 45%; max-width: 16px; border-radius: 2px 2px 0 0; min-height: 1px; }
-    .bar.rev { background: var(--paid); } .bar.chg { background: var(--late); opacity: 0.75; }
-    .bar-label { font-size: 0.72rem; color: var(--muted); }
+    .bar { width: 45%; max-width: 14px; min-height: 1px; }
+    .bar.rev { background: var(--ink); } .bar.chg { background: #BDBDBD; }
+    .bar-label { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
     .two { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.5rem; }
     @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
     ul.plain { list-style: none; padding: 0; margin: 0; }
@@ -109,7 +108,7 @@ import { EurPipe, dateFr, messageErreur, moisLabel } from '../core/format';
               </div>
             }
           </div>
-          <div class="legend"><span><i class="cell paye"></i>Loyers encaissés</span><span><i class="cell retard"></i>Dépenses</span></div>
+          <div class="legend"><span><i class="cell paye"></i>Loyers encaissés</span><span><i class="cell" style="background:#BDBDBD"></i>Dépenses</span></div>
         </section>
 
         <section class="panel">
