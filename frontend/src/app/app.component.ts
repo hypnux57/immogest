@@ -9,16 +9,17 @@ import { AuthService } from './core/auth.service';
   template: `
     @if (auth.loggedIn()) {
       <div class="shell">
-        <nav class="side" aria-label="Navigation principale">
-          <div class="brand">ImmoGest</div>
-          <a routerLink="/tableau" routerLinkActive="on">Vue d'ensemble</a>
-          <a routerLink="/loyers" routerLinkActive="on">Loyers</a>
-          <a routerLink="/biens" routerLinkActive="on">Biens</a>
-          <a routerLink="/locataires" routerLinkActive="on">Locataires</a>
-          <a routerLink="/charges" routerLinkActive="on">Dépenses</a>
-          <div class="spacer"></div>
+        <header class="top">
+          <a class="brand" routerLink="/tableau">IMMOGEST</a>
           <button class="logout" type="button" (click)="auth.logout()">Se déconnecter</button>
-        </nav>
+          <nav class="nav" aria-label="Navigation principale">
+            <a routerLink="/tableau" routerLinkActive="on">Vue d'ensemble</a>
+            <a routerLink="/loyers" routerLinkActive="on">Loyers</a>
+            <a routerLink="/biens" routerLinkActive="on">Biens</a>
+            <a routerLink="/locataires" routerLinkActive="on">Locataires</a>
+            <a routerLink="/charges" routerLinkActive="on">Dépenses</a>
+          </nav>
+        </header>
         <main class="main"><router-outlet /></main>
       </div>
     } @else {
