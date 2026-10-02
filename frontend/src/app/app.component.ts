@@ -19,6 +19,7 @@ import { AuthService } from './core/auth.service';
             <a routerLink="/locataires" routerLinkActive="on">Locataires</a>
             <a routerLink="/charges" routerLinkActive="on">Dépenses</a>
             <a routerLink="/rentabilite" routerLinkActive="on">Rentabilité</a>
+            <a routerLink="/impots" routerLinkActive="on">Impôts</a>
           </nav>
         </header>
         <main class="main"><router-outlet /></main>

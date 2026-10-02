@@ -13,6 +13,7 @@ export const routes: Routes = [
       { path: 'locataires', loadComponent: () => import('./pages/locataires.component').then((m) => m.LocatairesComponent) },
       { path: 'loyers', loadComponent: () => import('./pages/loyers.component').then((m) => m.LoyersComponent) },
       { path: 'rentabilite', loadComponent: () => import('./pages/rentabilite.component').then((m) => m.RentabiliteComponent) },
+      { path: 'impots', loadComponent: () => import('./pages/fiscalite.component').then((m) => m.FiscaliteComponent) },
       { path: 'charges', loadComponent: () => import('./pages/charges.component').then((m) => m.ChargesComponent) },
     ],
   },
