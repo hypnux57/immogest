@@ -23,7 +23,9 @@ export class CarteBiensComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   async ngAfterViewInit(): Promise<void> {
     // Leaflet n'est chargé que lorsqu'on affiche la carte
-    this.L = await import('leaflet');
+    // Selon le bundler, Leaflet arrive en export par défaut (CommonJS) ou en espace de noms
+    const mod: any = await import('leaflet');
+    this.L = (mod.default ?? mod) as typeof Leaflet;
     const L = this.L;
     this.carte = L.map(this.conteneur.nativeElement, { scrollWheelZoom: false, zoomControl: true }).setView([48.85, 4.5], 6);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
