@@ -149,3 +149,24 @@ table.list .actions { display: flex; gap: 0.4rem; justify-content: flex-end; fle
   .reveal { animation: reveal 0.6s ease-out both; }
   @keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
 }
+
+/* ---------- carte des biens (éléments créés par Leaflet, hors composants) ---------- */
+.carte { height: 380px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; background: var(--soft); }
+.carte .leaflet-tile-pane { filter: grayscale(1) contrast(1.05) brightness(1.03); }
+.carte .leaflet-control-attribution { font-size: 0.6rem; }
+.carte .leaflet-bar a { border-radius: 0 !important; color: var(--ink); }
+.pin { background: transparent; border: 0; }
+.pin span {
+  display: inline-block; transform: translate(-50%, -100%); white-space: nowrap;
+  background: var(--ink); color: #fff; padding: 0.3rem 0.55rem;
+  font-family: var(--font); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  position: relative;
+}
+.pin span::after {
+  content: ''; position: absolute; left: 50%; bottom: -5px; margin-left: -5px;
+  border: 5px solid transparent; border-top-color: var(--ink); border-bottom: 0;
+}
+.pin.vacant span { background: #fff; color: var(--ink); outline: 1px solid var(--ink); }
+.leaflet-popup-content-wrapper { border-radius: 0; font-family: var(--font); }
+.leaflet-popup-content { margin: 0.9rem 1rem; font-size: 0.85rem; line-height: 1.5; }
+.leaflet-popup-content strong { display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.2rem; }
