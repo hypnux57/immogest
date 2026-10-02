@@ -13,6 +13,8 @@ export interface Bien {
   annee_achat: number | null;
   prix_achat: number;
   valeur_actuelle: number;
+  interets_annuels: number;
+  quote_part: number;
   statut: 'Loué' | 'Vacant' | 'Travaux';
   notes: string;
 }
