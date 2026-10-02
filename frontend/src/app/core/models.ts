@@ -9,6 +9,10 @@ export interface Bien {
   charges_mens: number;
   credit_mens: number;
   taxe_fonciere: number;
+  assurance_pno: number;
+  annee_achat: number | null;
+  prix_achat: number;
+  valeur_actuelle: number;
   statut: 'Loué' | 'Vacant' | 'Travaux';
   notes: string;
 }
