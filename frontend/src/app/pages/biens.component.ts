@@ -42,6 +42,8 @@ type BienForm = Omit<Bien, 'id'> & { id?: number };
           <div class="field"><label for="b-annee">Année d'achat</label><input id="b-annee" name="annee" type="number" min="1950" max="2100" [(ngModel)]="form.annee_achat"></div>
           <div class="field"><label for="b-prix">Coût d'acquisition total (€)</label><input id="b-prix" name="prix" type="number" min="0" step="1" [(ngModel)]="form.prix_achat"></div>
           <div class="field"><label for="b-valeur">Valeur estimée aujourd'hui (€)</label><input id="b-valeur" name="valeur" type="number" min="0" step="1" [(ngModel)]="form.valeur_actuelle"></div>
+          <div class="field"><label for="b-int">Intérêts d'emprunt annuels (€)</label><input id="b-int" name="int" type="number" min="0" step="0.01" [(ngModel)]="form.interets_annuels"></div>
+          <div class="field"><label for="b-qp">Part louée du logement (%)</label><input id="b-qp" name="qp" type="number" min="0" max="100" step="1" [(ngModel)]="form.quote_part"></div>
           <div class="field wide"><label for="b-notes">Notes</label><input id="b-notes" name="notes" [(ngModel)]="form.notes"></div>
         </div>
         <div class="form-actions">
@@ -106,7 +108,7 @@ export class BiensComponent implements OnInit {
 
   nouveau(): void {
     this.erreur = '';
-    this.form = { nom: '', type: 'Appartement', surface: 0, loyer: 0, charges_mens: 0, credit_mens: 0, taxe_fonciere: 0, assurance_pno: 0, annee_achat: null, prix_achat: 0, valeur_actuelle: 0, statut: 'Loué', notes: '' };
+    this.form = { nom: '', type: 'Appartement', surface: 0, loyer: 0, charges_mens: 0, credit_mens: 0, taxe_fonciere: 0, assurance_pno: 0, annee_achat: null, prix_achat: 0, valeur_actuelle: 0, interets_annuels: 0, quote_part: 100, statut: 'Loué', notes: '' };
   }
 
   modifier(b: Bien): void { this.erreur = ''; this.form = { ...b }; }
