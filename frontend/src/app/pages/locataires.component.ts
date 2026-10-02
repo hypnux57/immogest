@@ -13,7 +13,7 @@ type LocataireForm = Omit<Locataire, 'id'> & { id?: number };
   imports: [FormsModule, EurPipe],
   template: `
     <header class="page-head">
-      <div><h1>Locataires</h1><p class="sub">{{ locataires.length }} baux en cours</p></div>
+      <div><h1>Locataires</h1><p class="sub">{{ actuels().length }} baux en cours, {{ anciens().length }} dans l'historique</p></div>
       @if (!form) { <button class="btn primary" type="button" (click)="nouveau()" [disabled]="!biens.length">Ajouter un locataire</button> }
     </header>
 
@@ -47,30 +47,35 @@ type LocataireForm = Omit<Locataire, 'id'> & { id?: number };
       </form>
     }
 
-    @if (locataires.length) {
-      <div class="table-wrap">
-        <table class="list">
-          <thead><tr><th>Locataire</th><th>Bien</th><th>Bail</th><th class="num">Loyer</th><th class="num">Dépôt</th><th></th></tr></thead>
-          <tbody>
-            @for (l of locataires; track l.id) {
-              <tr>
-                <td><div>{{ l.prenom }} {{ l.nom }}</div><div class="secondary">{{ l.email || l.tel || l.notes }}</div></td>
-                <td>{{ nomBien(l.bien_id) }}</td>
-                <td>
-                  <div class="secondary">{{ fr(l.debut) }} → {{ fr(l.fin) }}</div>
-                  @if (etatBail(l); as e) { <span class="badge" [class]="'badge ' + e.cls">{{ e.txt }}</span> }
-                </td>
-                <td class="num">{{ l.loyer | eur }}</td>
-                <td class="num">{{ l.depot | eur }}</td>
-                <td><div class="actions">
-                  <button class="btn small" type="button" (click)="modifier(l)">Modifier</button>
-                  <button class="btn small danger" type="button" (click)="supprimer(l)">Supprimer</button>
-                </div></td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    @for (g of groupes(); track g.titre) {
+      @if (g.liste.length) {
+        <section style="margin-bottom:3rem">
+          <h2>{{ g.titre }}</h2>
+          <div class="table-wrap">
+            <table class="list">
+              <thead><tr><th>Locataire</th><th>Bien</th><th>Bail</th><th class="num">Loyer</th><th class="num">Dépôt</th><th></th></tr></thead>
+              <tbody>
+                @for (l of g.liste; track l.id) {
+                  <tr>
+                    <td><div>{{ l.prenom }} {{ l.nom }}</div><div class="secondary">{{ l.email || l.tel || l.notes }}</div></td>
+                    <td>{{ nomBien(l.bien_id) }}</td>
+                    <td>
+                      <div class="secondary">{{ fr(l.debut) }} → {{ fr(l.fin) }}</div>
+                      @if (etatBail(l); as e) { <span class="badge" [class]="'badge ' + e.cls">{{ e.txt }}</span> }
+                    </td>
+                    <td class="num">{{ l.loyer | eur }}</td>
+                    <td class="num">{{ l.depot | eur }}</td>
+                    <td><div class="actions">
+                      <button class="btn small" type="button" (click)="modifier(l)">Modifier</button>
+                      <button class="btn small danger" type="button" (click)="supprimer(l)">Supprimer</button>
+                    </div></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
     }
   `,
 })
@@ -91,13 +96,23 @@ export class LocatairesComponent implements OnInit {
     });
   }
 
+  private aujourdhui(): string { return new Date().toISOString().slice(0, 10); }
+  actuels(): Locataire[] { const t = this.aujourdhui(); return this.locataires.filter((l) => !l.fin || l.fin >= t); }
+  anciens(): Locataire[] {
+    const t = this.aujourdhui();
+    return this.locataires.filter((l) => !!l.fin && l.fin < t).sort((a, b) => (b.fin ?? '').localeCompare(a.fin ?? ''));
+  }
+  groupes(): { titre: string; liste: Locataire[] }[] {
+    return [{ titre: 'Baux en cours', liste: this.actuels() }, { titre: 'Historique', liste: this.anciens() }];
+  }
+
   nomBien(id: number): string { return this.biens.find((b) => b.id === id)?.nom ?? '—'; }
   fr(iso: string | null): string { return dateFr(iso); }
 
   etatBail(l: Locataire): { cls: string; txt: string } | null {
     if (!l.fin) return null;
     const jours = Math.round((new Date(l.fin).getTime() - Date.now()) / 86400000);
-    if (jours < 0) return { cls: 'bad', txt: 'Bail terminé' };
+    if (jours < 0) return { cls: 'neutre', txt: 'Terminé' };
     if (jours <= 90) return { cls: 'warn', txt: `Fin dans ${jours} j` };
     return { cls: 'ok', txt: 'En cours' };
   }
