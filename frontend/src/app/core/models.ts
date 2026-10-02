@@ -15,6 +15,11 @@ export interface Bien {
   valeur_actuelle: number;
   interets_annuels: number;
   quote_part: number;
+  adresse: string;
+  code_postal: string;
+  ville: string;
+  latitude: number | null;
+  longitude: number | null;
   statut: 'Loué' | 'Vacant' | 'Travaux';
   notes: string;
 }
