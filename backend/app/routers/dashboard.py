@@ -61,7 +61,7 @@ def dashboard(db: Session = Depends(get_db)):
 
     loyers_attendus = float(sum(l.loyer for l in actifs))
     credits = float(sum(b.credit_mens for b in biens))
-    charges_fixes = float(sum(b.charges_mens for b in biens)) + float(sum(b.taxe_fonciere for b in biens)) / 12
+    charges_fixes = float(sum(b.charges_mens for b in biens)) + float(sum(b.taxe_fonciere + b.assurance_pno for b in biens)) / 12
     cur = [p for p in paiements if p.mois == current]
 
     return {
