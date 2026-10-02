@@ -15,6 +15,10 @@ class BienIn(BaseModel):
     charges_mens: float = 0
     credit_mens: float = 0
     taxe_fonciere: float = 0
+    assurance_pno: float = 0
+    annee_achat: Optional[int] = None
+    prix_achat: float = 0
+    valeur_actuelle: float = 0
     statut: Literal["Loué", "Vacant", "Travaux"] = "Loué"
     notes: str = ""
 

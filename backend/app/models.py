@@ -15,6 +15,10 @@ class Bien(Base):
     charges_mens: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
     credit_mens: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
     taxe_fonciere: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    assurance_pno: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    annee_achat: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    prix_achat: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    valeur_actuelle: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
     statut: Mapped[str] = mapped_column(String(30), default="Loué")
     notes: Mapped[str] = mapped_column(Text, default="")
 
