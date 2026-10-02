@@ -31,6 +31,9 @@ def dashboard(db: Session = Depends(get_db)):
     charges = db.scalars(select(Charge).where(Charge.date >= date.fromisoformat(months[0] + "-01"))).all()
 
     current = months[-1]
+    today = date.today()
+    # Baux en cours : commencés (ou sans date) et pas encore terminés
+    actifs = [l for l in locataires if (l.debut is None or l.debut <= today) and (l.fin is None or l.fin >= today)]
     loc_bien = {loc.id: loc.bien_id for loc in locataires}
 
     # Grille "registre" : statut de chaque bien pour chaque mois
@@ -56,7 +59,7 @@ def dashboard(db: Session = Depends(get_db)):
         revenus_mois.append(float(sum(p.montant for p in paiements if p.mois == mo and p.statut == "Payé")))
         charges_mois.append(float(sum(c.montant for c in charges if c.date.strftime("%Y-%m") == mo)))
 
-    loyers_attendus = float(sum(l.loyer for l in locataires))
+    loyers_attendus = float(sum(l.loyer for l in actifs))
     credits = float(sum(b.credit_mens for b in biens))
     charges_fixes = float(sum(b.charges_mens for b in biens)) + float(sum(b.taxe_fonciere for b in biens)) / 12
     cur = [p for p in paiements if p.mois == current]
@@ -77,7 +80,7 @@ def dashboard(db: Session = Depends(get_db)):
         "registre": grid,
         "baux_a_echeance": [
             {"locataire_id": l.id, "nom": f"{l.prenom} {l.nom}".strip(), "fin": l.fin.isoformat()}
-            for l in locataires
-            if l.fin and 0 <= (l.fin - date.today()).days <= 90
+            for l in actifs
+            if l.fin and 0 <= (l.fin - today).days <= 90
         ],
     }

@@ -1,3 +1,4 @@
+import calendar
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
@@ -18,11 +19,15 @@ def by_month(mois: str, db: Session = Depends(get_db)):
 
 @router.post("/generer", response_model=list[PaiementOut])
 def generate(mois: str = Query(pattern=r"^\d{4}-\d{2}$"), db: Session = Depends(get_db)):
-    """Crée une échéance "En attente" pour chaque locataire qui n'en a pas encore ce mois-ci."""
+    """Crée une échéance "En attente" pour chaque locataire dont le bail couvre ce mois et qui n'en a pas encore."""
+    y, m = int(mois[:4]), int(mois[5:7])
+    premier = date(y, m, 1)
+    dernier = date(y, m, calendar.monthrange(y, m)[1])
     existing = {p.locataire_id for p in db.scalars(select(Paiement).where(Paiement.mois == mois))}
     created = []
     for loc in db.scalars(select(Locataire)):
-        if loc.id not in existing:
+        en_cours = (loc.debut is None or loc.debut <= dernier) and (loc.fin is None or loc.fin >= premier)
+        if en_cours and loc.id not in existing:
             p = Paiement(locataire_id=loc.id, mois=mois, montant=loc.loyer, statut="En attente")
             db.add(p)
             created.append(p)
