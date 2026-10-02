@@ -19,6 +19,8 @@ class BienIn(BaseModel):
     annee_achat: Optional[int] = None
     prix_achat: float = 0
     valeur_actuelle: float = 0
+    interets_annuels: float = 0
+    quote_part: float = Field(default=100, ge=0, le=100)
     statut: Literal["Loué", "Vacant", "Travaux"] = "Loué"
     notes: str = ""
 

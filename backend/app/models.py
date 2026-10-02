@@ -19,6 +19,8 @@ class Bien(Base):
     annee_achat: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     prix_achat: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
     valeur_actuelle: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    interets_annuels: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    quote_part: Mapped[float] = mapped_column(Numeric(5, 2), default=100)
     statut: Mapped[str] = mapped_column(String(30), default="Loué")
     notes: Mapped[str] = mapped_column(Text, default="")
 
