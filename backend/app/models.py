@@ -1,6 +1,6 @@
 import datetime as dt
 from typing import Optional
-from sqlalchemy import ForeignKey, String, Numeric, Integer, Date, Text
+from sqlalchemy import ForeignKey, String, Numeric, Integer, Date, Text, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
 
@@ -21,6 +21,11 @@ class Bien(Base):
     valeur_actuelle: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
     interets_annuels: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
     quote_part: Mapped[float] = mapped_column(Numeric(5, 2), default=100)
+    adresse: Mapped[str] = mapped_column(String(250), default="")
+    code_postal: Mapped[str] = mapped_column(String(10), default="")
+    ville: Mapped[str] = mapped_column(String(120), default="")
+    latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     statut: Mapped[str] = mapped_column(String(30), default="Loué")
     notes: Mapped[str] = mapped_column(Text, default="")
 

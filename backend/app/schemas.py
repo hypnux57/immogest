@@ -21,6 +21,11 @@ class BienIn(BaseModel):
     valeur_actuelle: float = 0
     interets_annuels: float = 0
     quote_part: float = Field(default=100, ge=0, le=100)
+    adresse: str = ""
+    code_postal: str = ""
+    ville: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     statut: Literal["Loué", "Vacant", "Travaux"] = "Loué"
     notes: str = ""
 
