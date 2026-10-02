@@ -38,6 +38,10 @@ type BienForm = Omit<Bien, 'id'> & { id?: number };
           <div class="field"><label for="b-charges">Charges mensuelles (€)</label><input id="b-charges" name="charges" type="number" min="0" step="0.01" [(ngModel)]="form.charges_mens"></div>
           <div class="field"><label for="b-credit">Mensualité du crédit (€)</label><input id="b-credit" name="credit" type="number" min="0" step="0.01" [(ngModel)]="form.credit_mens"></div>
           <div class="field"><label for="b-tf">Taxe foncière annuelle (€)</label><input id="b-tf" name="tf" type="number" min="0" step="0.01" [(ngModel)]="form.taxe_fonciere"></div>
+          <div class="field"><label for="b-pno">Assurance PNO annuelle (€)</label><input id="b-pno" name="pno" type="number" min="0" step="0.01" [(ngModel)]="form.assurance_pno"></div>
+          <div class="field"><label for="b-annee">Année d'achat</label><input id="b-annee" name="annee" type="number" min="1950" max="2100" [(ngModel)]="form.annee_achat"></div>
+          <div class="field"><label for="b-prix">Coût d'acquisition total (€)</label><input id="b-prix" name="prix" type="number" min="0" step="1" [(ngModel)]="form.prix_achat"></div>
+          <div class="field"><label for="b-valeur">Valeur estimée aujourd'hui (€)</label><input id="b-valeur" name="valeur" type="number" min="0" step="1" [(ngModel)]="form.valeur_actuelle"></div>
           <div class="field wide"><label for="b-notes">Notes</label><input id="b-notes" name="notes" [(ngModel)]="form.notes"></div>
         </div>
         <div class="form-actions">
@@ -74,7 +78,7 @@ type BienForm = Omit<Bien, 'id'> & { id?: number };
           </tbody>
         </table>
       </div>
-      <p class="secondary" style="margin-top:.6rem">Solde mensuel = loyer − crédit − charges − taxe foncière / 12.</p>
+      <p class="secondary" style="margin-top:.6rem">Solde mensuel = loyer − crédit − charges − (taxe foncière + assurance PNO) / 12.</p>
     }
   `,
 })
@@ -97,12 +101,12 @@ export class BiensComponent implements OnInit {
 
   totalLoyers(): number { return this.biens.reduce((s, b) => s + Number(b.loyer), 0); }
   solde(b: Bien): number {
-    return Math.round((Number(b.loyer) - Number(b.credit_mens) - Number(b.charges_mens) - Number(b.taxe_fonciere) / 12) * 100) / 100;
+    return Math.round((Number(b.loyer) - Number(b.credit_mens) - Number(b.charges_mens) - Number(b.taxe_fonciere) / 12 - Number(b.assurance_pno) / 12) * 100) / 100;
   }
 
   nouveau(): void {
     this.erreur = '';
-    this.form = { nom: '', type: 'Appartement', surface: 0, loyer: 0, charges_mens: 0, credit_mens: 0, taxe_fonciere: 0, statut: 'Loué', notes: '' };
+    this.form = { nom: '', type: 'Appartement', surface: 0, loyer: 0, charges_mens: 0, credit_mens: 0, taxe_fonciere: 0, assurance_pno: 0, annee_achat: null, prix_achat: 0, valeur_actuelle: 0, statut: 'Loué', notes: '' };
   }
 
   modifier(b: Bien): void { this.erreur = ''; this.form = { ...b }; }
