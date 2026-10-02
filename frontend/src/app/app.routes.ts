@@ -12,6 +12,7 @@ export const routes: Routes = [
       { path: 'biens', loadComponent: () => import('./pages/biens.component').then((m) => m.BiensComponent) },
       { path: 'locataires', loadComponent: () => import('./pages/locataires.component').then((m) => m.LocatairesComponent) },
       { path: 'loyers', loadComponent: () => import('./pages/loyers.component').then((m) => m.LoyersComponent) },
+      { path: 'rentabilite', loadComponent: () => import('./pages/rentabilite.component').then((m) => m.RentabiliteComponent) },
       { path: 'charges', loadComponent: () => import('./pages/charges.component').then((m) => m.ChargesComponent) },
     ],
   },
