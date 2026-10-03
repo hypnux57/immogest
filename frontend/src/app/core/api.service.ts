@@ -41,6 +41,10 @@ export class ApiService {
     return this.http.post<Paiement[]>(`${this.base}/paiements/generer?mois=${mois}`, {});
   }
 
+  importerDepenses(depenses: unknown[]): Observable<{ importees: number }> {
+    return this.http.post<{ importees: number }>(`${this.base}/charges/lot`, { depenses });
+  }
+
   payer(id: number): Observable<Paiement> {
     return this.http.post<Paiement>(`${this.base}/paiements/${id}/payer`, {});
   }
