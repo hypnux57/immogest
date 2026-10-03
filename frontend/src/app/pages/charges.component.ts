@@ -4,13 +4,14 @@ import { forkJoin } from 'rxjs';
 import { ApiService } from '../core/api.service';
 import { Bien, Charge } from '../core/models';
 import { EurPipe, dateFr, messageErreur } from '../core/format';
+import { ImportDepensesComponent } from './import-depenses.component';
 
 type ChargeForm = Omit<Charge, 'id'> & { id?: number };
 
 @Component({
   selector: 'app-charges',
   standalone: true,
-  imports: [FormsModule, EurPipe],
+  imports: [FormsModule, EurPipe, ImportDepensesComponent],
   styles: [`
     .filters { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
     .filters select { width: auto; }
@@ -24,10 +25,19 @@ type ChargeForm = Omit<Charge, 'id'> & { id?: number };
   template: `
     <header class="page-head">
       <div><h1>Dépenses</h1><p class="sub">{{ filtrees().length }} dépenses, {{ totalFiltre() | eur }} au total</p></div>
-      @if (!form) { <button class="btn primary" type="button" (click)="nouveau()" [disabled]="!biens.length">Ajouter une dépense</button> }
+      @if (!form && !importOuvert) {
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button class="btn" type="button" (click)="importOuvert = true; info = ''" [disabled]="!biens.length">Importer un fichier Excel</button>
+          <button class="btn primary" type="button" (click)="nouveau()" [disabled]="!biens.length">Ajouter une dépense</button>
+        </div>
+      }
     </header>
 
     @if (erreur) { <div class="error" role="alert">{{ erreur }}</div> }
+    @if (info) { <div class="panel" role="status">{{ info }}</div> }
+    @if (importOuvert) {
+      <app-import-depenses [biens]="biens" [charges]="charges" [categories]="categories" (termine)="importFini($event)" (annuler)="importOuvert = false" />
+    }
 
     @if (form) {
       <form class="panel reveal" (ngSubmit)="enregistrer()">
@@ -113,6 +123,8 @@ export class ChargesComponent implements OnInit {
   charge = false;
   filtreBien = 0;
   filtreAnnee = '';
+  importOuvert = false;
+  info = '';
   categories = ['Travaux', 'Charges communes', 'Taxe foncière', 'Assurance', 'Gestion locative', 'Entretien', 'Équipement', 'Autre'];
 
   ngOnInit(): void { this.charger(); }
@@ -142,6 +154,12 @@ export class ChargesComponent implements OnInit {
     return [...map.entries()]
       .map(([nom, total]) => ({ nom, total: Math.round(total * 100) / 100, pct: Math.round((total / max) * 100) }))
       .sort((a, b) => b.total - a.total);
+  }
+
+  importFini(n: number): void {
+    this.importOuvert = false;
+    this.info = `${n} dépense(s) importée(s).`;
+    this.charger();
   }
 
   nouveau(): void {
