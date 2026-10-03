@@ -70,6 +70,8 @@ class ChargeIn(BaseModel):
     description: str = ""
     montant: float = 0
     date: dt.date
+    montant_deductible: Optional[float] = None  # vide = montant entièrement déductible selon la catégorie
+    justificatif: str = ""
 
 
 class ChargeOut(ChargeIn, ORM):

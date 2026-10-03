@@ -72,5 +72,7 @@ class Charge(Base):
     description: Mapped[str] = mapped_column(Text, default="")
     montant: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
     date: Mapped[dt.date] = mapped_column(Date)
+    montant_deductible: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+    justificatif: Mapped[str] = mapped_column(String(250), default="")
 
     bien = relationship("Bien", back_populates="charges")
