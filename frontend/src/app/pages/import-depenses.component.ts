@@ -195,7 +195,16 @@ export class ImportDepensesComponent {
     this.nomFichier = fichier.name;
     try {
       const XLSX = await this.xlsx();
-      this.classeur = XLSX.read(await fichier.arrayBuffer(), { cellDates: true });
+      if (/\.(csv|txt)$/i.test(fichier.name)) {
+        // CSV : on décode nous-mêmes (UTF-8, sinon Windows-1252 comme Excel en français) et on garde le texte brut,
+        // pour lire correctement les dates jj/mm/aaaa et les montants à virgule
+        const octets = new Uint8Array(await fichier.arrayBuffer());
+        let texte = new TextDecoder('utf-8').decode(octets);
+        if (texte.includes('\uFFFD')) texte = new TextDecoder('windows-1252').decode(octets);
+        this.classeur = XLSX.read(texte.replace(/^\uFEFF/, ''), { type: 'string', raw: true });
+      } else {
+        this.classeur = XLSX.read(await fichier.arrayBuffer(), { cellDates: true });
+      }
       this.feuilles = this.classeur.SheetNames;
       this.feuille = this.feuilles[0];
       this.analyserFeuille();
