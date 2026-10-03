@@ -5,13 +5,14 @@ import { ApiService } from '../core/api.service';
 import { Bien, Charge } from '../core/models';
 import { EurPipe, dateFr, messageErreur } from '../core/format';
 import { ImportDepensesComponent } from './import-depenses.component';
+import { ImportFacturesComponent } from './import-factures.component';
 
 type ChargeForm = Omit<Charge, 'id'> & { id?: number };
 
 @Component({
   selector: 'app-charges',
   standalone: true,
-  imports: [FormsModule, EurPipe, ImportDepensesComponent],
+  imports: [FormsModule, EurPipe, ImportDepensesComponent, ImportFacturesComponent],
   styles: [`
     .filters { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
     .filters select { width: auto; }
@@ -25,8 +26,9 @@ type ChargeForm = Omit<Charge, 'id'> & { id?: number };
   template: `
     <header class="page-head">
       <div><h1>Dépenses</h1><p class="sub">{{ filtrees().length }} dépenses, {{ totalFiltre() | eur }} au total</p></div>
-      @if (!form && !importOuvert) {
+      @if (!form && !importOuvert && !facturesOuvert) {
         <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button class="btn" type="button" (click)="facturesOuvert = true; info = ''" [disabled]="!biens.length">Importer des factures PDF</button>
           <button class="btn" type="button" (click)="importOuvert = true; info = ''" [disabled]="!biens.length">Importer un fichier Excel</button>
           <button class="btn primary" type="button" (click)="nouveau()" [disabled]="!biens.length">Ajouter une dépense</button>
         </div>
@@ -37,6 +39,9 @@ type ChargeForm = Omit<Charge, 'id'> & { id?: number };
     @if (info) { <div class="panel" role="status">{{ info }}</div> }
     @if (importOuvert) {
       <app-import-depenses [biens]="biens" [charges]="charges" [categories]="categories" (termine)="importFini($event)" (annuler)="importOuvert = false" />
+    }
+    @if (facturesOuvert) {
+      <app-import-factures [biens]="biens" [charges]="charges" [categories]="categories" (termine)="importFini($event)" (annuler)="facturesOuvert = false" />
     }
 
     @if (form) {
@@ -54,6 +59,7 @@ type ChargeForm = Omit<Charge, 'id'> & { id?: number };
             </select>
           </div>
           <div class="field"><label for="c-montant">Montant (€)</label><input id="c-montant" name="montant" type="number" min="0" step="0.01" [(ngModel)]="form.montant"></div>
+          <div class="field"><label for="c-ded">Dont déductible (€, vide = tout)</label><input id="c-ded" name="ded" type="number" min="0" step="0.01" [(ngModel)]="form.montant_deductible"></div>
           <div class="field"><label for="c-date">Date</label><input id="c-date" name="date" type="date" [(ngModel)]="form.date" required></div>
           <div class="field wide"><label for="c-desc">Description</label><input id="c-desc" name="desc" [(ngModel)]="form.description"></div>
         </div>
@@ -99,7 +105,12 @@ type ChargeForm = Omit<Charge, 'id'> & { id?: number };
                 <td>{{ nomBien(c.bien_id) }}</td>
                 <td><span class="badge neutre">{{ c.categorie }}</span></td>
                 <td class="secondary">{{ c.description || '—' }}</td>
-                <td class="num">{{ c.montant | eur }}</td>
+                <td class="num">{{ c.montant | eur }}
+                  @if (c.montant_deductible !== null && c.montant_deductible !== undefined && +c.montant_deductible !== +c.montant) {
+                    <div class="secondary">dont {{ c.montant_deductible | eur }} déductible</div>
+                  }
+                  @if (c.justificatif) { <div class="secondary" [title]="c.justificatif">PDF</div> }
+                </td>
                 <td><div class="actions">
                   <button class="btn small" type="button" (click)="modifier(c)">Modifier</button>
                   <button class="btn small danger" type="button" (click)="supprimer(c)">Supprimer</button>
@@ -124,6 +135,7 @@ export class ChargesComponent implements OnInit {
   filtreBien = 0;
   filtreAnnee = '';
   importOuvert = false;
+  facturesOuvert = false;
   info = '';
   categories = ['Travaux', 'Charges communes', 'Taxe foncière', 'Assurance', 'Gestion locative', 'Entretien', 'Équipement', 'Autre'];
 
@@ -158,6 +170,7 @@ export class ChargesComponent implements OnInit {
 
   importFini(n: number): void {
     this.importOuvert = false;
+    this.facturesOuvert = false;
     this.info = `${n} dépense(s) importée(s).`;
     this.charger();
   }
@@ -165,7 +178,7 @@ export class ChargesComponent implements OnInit {
   nouveau(): void {
     this.erreur = '';
     this.form = {
-      bien_id: this.filtreBien || this.biens[0].id, categorie: 'Travaux', description: '', montant: 0,
+      bien_id: this.filtreBien || this.biens[0].id, categorie: 'Travaux', description: '', montant: 0, montant_deductible: null, justificatif: '',
       date: new Date().toISOString().slice(0, 10),
     };
   }

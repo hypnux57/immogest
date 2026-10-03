@@ -221,7 +221,8 @@ export class FiscaliteComponent implements OnInit {
       // Des baux qui se recouvrent (dates approximatives) gonfleraient les loyers
       if (joursOccupes > joursAn + 3) this.chevauchements.push(this.court(b.nom));
       const depensesAn = this.charges.filter((x) => x.bien_id === b.id && x.date.startsWith(String(this.p.annee)));
-      const somme = (cats: string[]) => depensesAn.filter((x) => cats.includes(x.categorie)).reduce((s, x) => s + Number(x.montant), 0);
+      // Part déductible saisie (ex. hors mobilier), sinon le montant entier
+      const somme = (cats: string[]) => depensesAn.filter((x) => cats.includes(x.categorie)).reduce((s, x) => s + Number(x.montant_deductible ?? x.montant), 0);
       c.l221 = 20 + somme(['Gestion locative']) * qp;
       c.l223 = Number(b.assurance_pno) * qp;
       c.l224 = somme(CATEGORIES_TRAVAUX) * qp;
