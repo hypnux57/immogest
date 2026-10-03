@@ -55,6 +55,8 @@ export interface Charge {
   description: string;
   montant: number;
   date: string;
+  montant_deductible: number | null;
+  justificatif: string;
 }
 
 export interface RegistreCell { mois: string; statut: 'paye' | 'attente' | 'retard' | 'vide'; montant: number; }
